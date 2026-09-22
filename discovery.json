@@ -1,0 +1,61 @@
+{
+  "question": "How to generate custom images, icons, logos, or illustrations from text descriptions?",
+  "trigger": ["Generate image", "Create icon", "Make logo", "Design illustration", "Remove background", "Cut image"],
+  "decision": ["Generate the image with specified parameters", "Request clarification on design requirements"],
+  "evidence": ["User text prompt describing the desired image", "Size and style preferences"],
+  "success_measure": "A valid image URL is returned matching the requested dimensions and style",
+  "outcome": "Generate a custom image via ComfyUI and return the image URL",
+  "intended_users": ["designers", "developers", "content creators", "product managers"],
+  "input_types": ["text prompt", "style preferences", "dimension specifications"],
+  "output_artifacts": ["generated image URL (PNG format)"],
+  "use_cases": ["app icon generation", "logo design", "illustration creation", "background removal"],
+  "examples": [
+    {
+      "invocation": "/pix-image-generator-skill generate a flat vector app icon with warm colors on transparent background",
+      "description": "Generate a single app icon"
+    },
+    {
+      "invocation": "/pix-image-generator-skill create 3 logo designs in tech, nature, and retro styles",
+      "description": "Generate multiple logos sequentially"
+    }
+  ],
+  "permissions_systems": ["Network access to n8n webhook at 192.168.1.3:5678", "Network access to ComfyUI at 192.168.1.4:8123"],
+  "typical_completion_time": "5-15 seconds per image",
+  "compatibility": {
+    "declared": ["opencode", "trae"],
+    "certified": []
+  },
+  "environment": {
+    "documentation_sources": ["n8n workflow API endpoint"],
+    "data_sources": ["ComfyUI image generation backend"],
+    "required_capabilities": ["HTTP POST requests to internal network endpoints"],
+    "readiness_checks": ["n8n service running at 192.168.1.3:5678", "ComfyUI accessible at 192.168.1.4:8123"]
+  },
+  "risk": {
+    "tier": "low",
+    "permissions": ["Network access to internal image generation service"],
+    "mutation_boundary": "read-only",
+    "approval_required": []
+  },
+  "software_mutation": {
+    "applies": false
+  },
+  "data_interfaces": {
+    "applies": true,
+    "interface_types": ["api"],
+    "authoritative_sources": ["n8n webhook API"],
+    "entities": ["Generated image"],
+    "identifiers": ["image_url"],
+    "relationships": ["Generated image is identified by its image_url"],
+    "field_semantics": ["prompt must be structured JSON", "width/height are pixel dimensions"],
+    "invariants": ["One request at a time (serial execution)"],
+    "freshness_and_pagination": ["Single request-response, no pagination"],
+    "nullability": ["prompt, width, height are required"],
+    "readiness_checks": ["API endpoint responds to health check"]
+  },
+  "routing_tests": {
+    "should_trigger": ["Generate an image", "Create a logo", "Make an icon", "Remove background from image"],
+    "should_not_trigger": ["Edit existing image file", "Batch process 100 images concurrently", "Deploy a web application"]
+  },
+  "support_tier": "supported"
+}

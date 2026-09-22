@@ -1,9 +1,24 @@
 ---
 name: pix-image-generator-skill
 description: This skill should be used when the user asks to generate or process images. Activates with phrases like generate image, create icon, make logo, design illustration, cut image, remove background. Provides image generation and processing capabilities via ComfyUI through n8n workflow service.
+license: MIT
+activation: /pix-image-generator-skill
+metadata:
+  author: pix
+  version: 1.0.0
+  created: 2026-09-22
+  last_reviewed: 2026-09-22
+  review_interval_days: 90
+provenance:
+  maintainer: pix
+  version: 1.0.0
+  created: "2026-09-22"
+  source_references:
+    - n8n workflow service at http://192.168.1.3:5678
+    - ComfyUI image generation backend
 ---
 
-# pix-image-generator 技能
+# pix-image-generator-skill
 
 ## 📂 基础信息
 
@@ -378,7 +393,13 @@ curl --location 'http://192.168.1.3:5678/webhook/comfyui-generate-cut-flat' \
 | Banner | 1920x1080 | 16:9 | 不透明 |
 | 头像 | 300x300 | 1:1 | 可选 |
 
-## ⚠️ 注意事项
+## Prerequisites
+
+- n8n workflow service running at `192.168.1.3:5678` with ComfyUI workflow active
+- ComfyUI backend accessible at `192.168.1.4:8123` for image retrieval
+- Network access from the agent environment to both endpoints
+
+## 注意事项
 
 1. **并发限制（最重要）**：图像生成服务是阻塞顺序执行的，**严禁并发请求**。必须等待当前请求返回结果后才能发起下一个请求。生成多张图片时必须使用串行模式（for 循环逐个 await）。
 2. **尺寸限制**：width 和 height 建议不超过 2048px，以保证处理速度
@@ -388,7 +409,7 @@ curl --location 'http://192.168.1.3:5678/webhook/comfyui-generate-cut-flat' \
 6. **网络环境**：确保调用端能访问 `192.168.1.3:5678` 和 `192.168.1.4:8123`
 7. **超时处理**：如单个请求超过 60 秒，建议超时重试，但重试时也要保持串行
 
-## 🚨 错误处理
+## 错误处理
 
 ### 常见错误及处理方式
 
@@ -398,3 +419,10 @@ curl --location 'http://192.168.1.3:5678/webhook/comfyui-generate-cut-flat' \
 | 单个请求超时 | 等待 60 秒后重试一次，仍失败则提示用户 |
 | 服务返回 404 | 检查 Webhook URL 是否正确，工作流是否激活 |
 | 服务返回 500 | 提示用户服务异常，稍后重试 |
+
+## Gotchas
+
+- 同一时间只能处理一个图像生成请求，串行执行是硬性限制
+- 内网 IP 地址 `192.168.1.3` 和 `192.168.1.4` 需要从 agent 运行环境可达
+- prompt 必须使用结构化 JSON 对象格式，不接受纯文本字符串
+- 默认尺寸为 1024x1024，未指定时自动使用
