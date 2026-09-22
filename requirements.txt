@@ -1,0 +1,2 @@
+# No external dependencies required — this skill uses Python stdlib only.
+# HTTP requests are made via agent's built-in capabilities (curl/fetch).

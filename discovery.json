@@ -53,6 +53,28 @@
     "nullability": ["prompt, width, height are required"],
     "readiness_checks": ["API endpoint responds to health check"]
   },
+  "semantic_contract": {
+    "applies": true,
+    "definitions": [{
+      "id": "image-generation-request",
+      "version": "1.0.0",
+      "definition": "Structured request to generate an image via ComfyUI n8n workflow",
+      "scope": "Image generation from text prompts",
+      "grain": "single request-response",
+      "unit": "pixels",
+      "source_precedence": ["n8n webhook API"],
+      "owner": "pix",
+      "valid_from": "2026-09-22",
+      "last_reviewed": "2026-09-22",
+      "review_interval_days": 90
+    }],
+    "dependencies": [{"id": "image-generation-request", "version": "1.0.0"}],
+    "ambiguity": {
+      "allowed_outcomes": ["answer", "ask", "refuse_unknown"],
+      "unresolved_action": "ask",
+      "clarification": "Please specify the image style, subject, and dimensions."
+    }
+  },
   "routing_tests": {
     "should_trigger": ["Generate an image", "Create a logo", "Make an icon", "Remove background from image"],
     "should_not_trigger": ["Edit existing image file", "Batch process 100 images concurrently", "Deploy a web application"]
